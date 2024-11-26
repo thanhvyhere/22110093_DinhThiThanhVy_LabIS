@@ -170,7 +170,8 @@ Encrypt the file with aes-256 cipher in CFB and OFB modes. How do you evaluate b
 
 ```openssl enc -aes-256-ofb -in textfile.txt -out ciphertext_ofb.bin -K $(cat randompassword) -iv $(cat iv)```
 
-![image](https://github.com/user-attachments/assets/e8771b5b-3f94-4ffa-8c5a-ecac7ae51c06)
+![image](https://github.com/user-attachments/assets/1e066ab0-4ba1-4b39-8e8a-bc58a4c5a7ce)
+
 
 **Error Propagation & Adjacent Plaintext Blocks Dependency**
 
