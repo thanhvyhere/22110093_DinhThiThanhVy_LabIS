@@ -79,7 +79,8 @@ Retry the transfer after starting the SSH service.
 ### 4.1 Generate a Random Symmetric Key
 
 Alice generates a random symmetric key for AES encryption:
-openssl rand -hex 32 > randompassword
+
+```openssl rand -hex 32 > randompassword```
 
 ![image](https://github.com/user-attachments/assets/b0bd8544-3ce1-4e4f-8b59-780d3bdd575b)
 
@@ -114,7 +115,9 @@ Alice sends the encrypted data (file.enc) and the encrypted symmetric key (rando
 ## 6. Bob Decrypts the Data
 ### 6.1 Decrypt the Symmetric Key
 On Bob’s machine, decrypt the symmetric key using his RSA private key:
+
 - ```openssl rsautl -decrypt -inkey keypair.pem -in randompassword.encrypted -out randompassword.decrypted```
+
 - ```rsautl -decrypt```: Decrypts data with RSA.
 - ```-inkey keypair.pem```: Uses Bob’s private key.
 - ```-in randompassword.encrypted```: Encrypted symmetric key.
