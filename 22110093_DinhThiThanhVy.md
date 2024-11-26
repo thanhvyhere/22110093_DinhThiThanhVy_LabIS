@@ -34,6 +34,7 @@ Alice creates a text file that will be securely sent to Bob:
 On Bob’s machine, generate an RSA private key:
 
 ```openssl genrsa -out keypair.pem 2048```
+
 - ```openssl genrsa```: Generates an RSA private key.
 - ```-out keypair.pem```: Saves the private key to keypair.pem.
 - ```2048```: Sets the RSA key length to 2048 bits, which balances security and performance.
@@ -41,7 +42,9 @@ On Bob’s machine, generate an RSA private key:
 ### 2.2 Extract Public Key
 
 From the private key, extract the public key:
+
 ```openssl rsa -in keypair.pem -pubout -out publickey.crt```
+
 - ```-in keypair.pem```: Input the private key.
 - ```-pubout```: Extract the public key.
 - ```-out publickey.crt```: Save the public key to publickey.crt.
@@ -51,6 +54,7 @@ From the private key, extract the public key:
 ## 3. Transfer Public Key to Alice
 3.1 Grant Permissions
 Before transferring, ensure the public key file is accessible:
+
 ```chmod 777 /home```
 ### 3.2 Send Public Key to Alice
 Transfer Bob’s public key to Alice using scp:
