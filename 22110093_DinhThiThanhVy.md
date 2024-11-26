@@ -16,6 +16,7 @@ Implement public-key based authentication step-by-step with openssl according th
 ### 1.1 Alice and Bob Configuration
 Alice (server): IP 10.9.0.5
 Bob (client): IP 10.9.0.6
+
 ![image](https://github.com/user-attachments/assets/d79db62f-7a51-4669-9557-6aadd5648726)
 
 ![image](https://github.com/user-attachments/assets/fba5e91e-046d-4824-ba38-8e51ede60dfc)
@@ -29,6 +30,7 @@ Alice creates a text file that will be securely sent to Bob:
 
 ## 2. Key Generation
 ### 2.1 Generate RSA Key Pair (Bob's Machine)
+
 On Bob’s machine, generate an RSA private key:
 
 ```openssl genrsa -out keypair.pem 2048```
@@ -147,15 +149,119 @@ By combining RSA and AES, the system ensures both security and efficiency in the
 
 # Task 2: Encrypting large message 
 Create a text file at least 56 bytes.
+
 **Question 1**:
 Encrypt the file with aes-256 cipher in CFB and OFB modes. How do you evaluate both cipher as far as error propagation and adjacent plaintext blocks are concerned. 
 **Answer 1**:
+- enrypt file with cfb mode
+```openssl enc -aes-256-cfb -in textfile.txt -out file_cfb.enc -pass file:/home/randompassword```
 
+- encrypt file with ofb mode
+```openssl enc -aes-256-ofb -in textfile.txt -out file_ofb.enc -pass file:/home/randompassword```
+
+![image](https://github.com/user-attachments/assets/e8771b5b-3f94-4ffa-8c5a-ecac7ae51c06)
+
+**Error Propagation & Adjacent Plaintext Blocks Dependency**
+
+### CFB Mode:
+![image](https://github.com/user-attachments/assets/38be08b7-d250-4fc5-aaa8-1a93503ef639)
+
+- Error Propagation: High.
+    - Cause: In CFB, the encryption process relies on feedback from previous ciphertext blocks. This means that each block of ciphertext is linked to the previous block of ciphertext, and as a result, a single-bit error in the ciphertext will affect not only the current plaintext block but also potentially multiple subsequent blocks.
+    - Example: If one bit in the ciphertext is corrupted, the decryption of the current and the next few plaintext blocks will be completely altered due to the feedback mechanism.
+    - Impact: This high error propagation makes CFB vulnerable in environments where data integrity is critical, as small errors in transmission can corrupt larger portions of the data.
+
+- Block Dependency: Strong.
+    - Cause: Since CFB relies on feedback, each plaintext block is directly dependent on the previous ciphertext block. This interdependence means that a corrupted ciphertext block will not only affect the decryption of that block but also corrupt the following blocks, causing a cascading effect.
+    - Example: If the ciphertext block corresponding to plaintext block 2 is corrupted, plaintext block 2 will be incorrect, and plaintext block 3 will also be affected because it depends on the incorrect ciphertext block 2.
+    - Impact: This strong interdependence between adjacent plaintext blocks ensures that CFB provides robust encryption, but it also means that errors have a wide-ranging impact.
+
+
+### OFB Mode:
+![image](https://github.com/user-attachments/assets/343c3156-ad93-4d10-8634-82cfa9d2c37e)
+
+- Error Propagation: Low.
+    - Cause: In OFB, the keystream is generated independently of the ciphertext, and it does not rely on feedback. This means that errors in the ciphertext only affect the corresponding byte in the plaintext, and do not propagate to other plaintext blocks.
+    - Example: If one byte in the ciphertext is corrupted, only the corresponding byte in the plaintext will be affected. The rest of the plaintext remains unaffected.
+    - Impact: OFB’s low error propagation is beneficial in scenarios where transmission errors are common, like in network communications, because the damage is limited to a single byte rather than multiple blocks.
+
+- Block Dependency: Weak (or No Dependency).
+    - Cause: In OFB, the keystream is generated independently of both the plaintext and ciphertext. Each block of plaintext is XORed with the keystream generated independently of any other data. This means that a corrupted ciphertext block only affects the corresponding plaintext block and does not affect adjacent blocks.
+    - Example: If ciphertext block 2 is corrupted, only plaintext block 2 will be incorrect, while plaintext blocks 1 and 3 will remain unaffected. 
+    - Impact: OFB mode ensures that adjacent blocks are independent, which makes it more resilient to errors. However, this independence also means that the mode doesn't link plaintext blocks together, potentially providing weaker integrity protection compared to CFB.
 **Question 2**:
 Modify the 8th byte of encrypted file in both modes (this emulates corrupted ciphertext).
 Decrypt corrupted file, watch the result and give your comment on Chaining dependencies and Error propagation criteria.
 
 **Answer 2**:
+
+In this scenario, you are working with AES encryption in two different modes: CFB (Cipher Feedback) and OFB (Output Feedback). You are also modifying the encrypted file (by changing the 8th bit of the ciphertext) to observe how the decryption process behaves with error propagation in both modes. Below is a detailed explanation of each step:
+
+Environment: 
+- Alice: IP 10.9.0.5
+
+**Generate an Initialization Vector (IV)**
+```openssl rand -hex 16 > iv```
+
+![Uploading image.png…]()
+
+- Purpose: This command generates a random Initialization Vector (IV) of 16 bytes (or 128 bits) in hexadecimal format.
+- How it works: The openssl rand -hex 16 command generates 16 random bytes (128 bits) and outputs them in hexadecimal format. This IV is necessary for both CFB and OFB modes of AES encryption to ensure randomness and security during encryption.
+
+**Encrypting the File in AES-256 CFB Mode**
+```openssl enc -aes-256-cfb -in textfile.txt -out ciphertext_cfb.bin -K $(cat randompassword) -iv $(cat iv)```
+- Purpose: This command encrypts the textfile.txt using AES-256 encryption in CFB mode.
+  - ```-aes-256-cfb```: Specifies the encryption algorithm (AES) and mode (CFB) with a 256-bit key.
+  - ```-in textfile.txt```: Input file to be encrypted.
+  - ```-out ciphertext_cfb.bin```: Output file where the encrypted data will be stored.
+  - ```-K $(cat randompassword)```: The -K flag specifies the encryption key. In this case, it uses the randompassword file from Task 1.
+  - ```-iv $(cat iv)```: Specifies the IV generated in Step 1, which is necessary for CFB encryption.
+
+**Encrypting the File in AES-256 OFB Mode**
+
+```openssl enc -aes-256-cfb -in textfile.txt -out ciphertext_ofb.bin -K $(cat randompassword) -iv $(cat iv)```
+
+- Purpose: This command encrypts the textfile.txt using AES-256 encryption in OFB mode, similar to CFB but with different feedback mechanisms.
+ Explanation: The same flags are used as in the previous step, but the encryption mode is set to OFB instead of CFB.
+
+**Modifying the 8th Byte in the Ciphertext**
+- CFB Mode:
+```dd if=/dev/zero bs=1 count=1 seek=7 conv=notrunc of=ciphertext_cfb.bin```
+- OFB Mode:
+```dd if=/dev/zero bs=1 count=1 seek=7 conv=notrunc of=ciphertext_ofb.bin```
+
+![image](https://github.com/user-attachments/assets/18ef3fbf-38b4-49c1-bd23-eca9e1e27da1)
+
+**Purpose:** This step simulates corruption by modifying the 8th byte of the ciphertext (after the 7th byte) by replacing it with zeros.
+- ```dd if=/dev/zero```: Specifies that the input data comes from /dev/zero (which produces zero bytes).
+- ```bs=1```: Sets the block size to 1 byte.
+- ```count=1```: This limits the operation to just 1 byte.
+- ```seek=7```: This tells dd to skip the first 7 bytes, so it starts modifying at the 8th byte.
+- ```conv=notrunc```: Ensures that the file is modified in place, rather than truncated.
+of=ciphertext_cfb.bin or ciphertext_ofb.bin: Specifies the encrypted file (depending on the mode).
+
+**Analysis of Error Propagation**
+After modifying the ciphertext, you will observe how the decryption behaves for CFB and OFB modes.
+
+![image](https://github.com/user-attachments/assets/c195a16b-72ab-4cac-a5ac-c3c54894a4c6)
+
+**- For CFB Mode:**
+Error Propagation:
+CFB mode has a feedback mechanism where the encryption of each block depends on the previous block, which means errors in ciphertext propagate.
+Since you modified the 8th byte of the ciphertext, the decryption process will fail to correctly decrypt this byte. Additionally, due to feedback in CFB mode, the error will propagate and affect the decryption of subsequent blocks.
+**For OFB Mode:**
+Error Propagation:
+In OFB mode, the ciphertext is XORed with a series of output blocks generated from the encryption of the IV. This mode does not rely on feedback from previous ciphertext blocks, so an error in one ciphertext block only affects the corresponding plaintext block.
+Modifying the 8th byte of the ciphertext in OFB mode will only corrupt the corresponding plaintext byte, with no effect on the subsequent bytes.
+Visual Comparison of the Result
+CFB Mode: Since CFB uses feedback, the error introduced at the 8th byte will propagate, and the output may show noticeable corruption in multiple adjacent plaintext blocks.
+OFB Mode: In contrast, OFB mode's lack of feedback means the corruption in the 8th byte will only affect that specific byte in the decrypted file, and the rest of the plaintext remains unaffected.
+
+### Conclusion
+CFB Mode: Modifying one byte in the ciphertext will cause errors to propagate to the subsequent blocks, corrupting multiple plaintext blocks.
+OFB Mode: A change in one byte of the ciphertext will only affect that specific byte of the plaintext, with no impact on other blocks.
+
+
 
 
 
