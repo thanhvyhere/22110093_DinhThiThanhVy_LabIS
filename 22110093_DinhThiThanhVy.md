@@ -164,11 +164,11 @@ Encrypt the file with aes-256 cipher in CFB and OFB modes. How do you evaluate b
 
 - Enrypt file with cfb mode:
   
-```openssl enc -aes-256-cfb -in textfile.txt -out file_cfb.enc -pass file:/home/randompassword```
+```openssl enc -aes-256-cfb -in textfile.txt -out ciphertext_cfb.bin -K $(cat randompassword) -iv $(cat iv)```
 
 - Encrypt file with ofb mode:
 
-```openssl enc -aes-256-ofb -in textfile.txt -out file_ofb.enc -pass file:/home/randompassword```
+```openssl enc -aes-256-ofb -in textfile.txt -out ciphertext_ofb.bin -K $(cat randompassword) -iv $(cat iv)```
 
 ![image](https://github.com/user-attachments/assets/e8771b5b-3f94-4ffa-8c5a-ecac7ae51c06)
 
