@@ -258,12 +258,14 @@ After modifying the ciphertext, you will observe how the decryption behaves for 
 
 ![image](https://github.com/user-attachments/assets/c195a16b-72ab-4cac-a5ac-c3c54894a4c6)
 
-**- For CFB Mode:**
-Error Propagation:
+#### For CFB Mode:
+**Error Propagation:**
 CFB mode has a feedback mechanism where the encryption of each block depends on the previous block, which means errors in ciphertext propagate.
 Since you modified the 8th byte of the ciphertext, the decryption process will fail to correctly decrypt this byte. Additionally, due to feedback in CFB mode, the error will propagate and affect the decryption of subsequent blocks.
-**For OFB Mode:**
-Error Propagation:
+
+#### For OFB Mode:
+
+**Error Propagation:**
 In OFB mode, the ciphertext is XORed with a series of output blocks generated from the encryption of the IV. This mode does not rely on feedback from previous ciphertext blocks, so an error in one ciphertext block only affects the corresponding plaintext block.
 Modifying the 8th byte of the ciphertext in OFB mode will only corrupt the corresponding plaintext byte, with no effect on the subsequent bytes.
 Visual Comparison of the Result
