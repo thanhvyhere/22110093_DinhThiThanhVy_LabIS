@@ -52,7 +52,7 @@ From the private key, extract the public key:
 ![image](https://github.com/user-attachments/assets/2e2ce151-976d-4e29-b10c-1cc12b49f755)
 
 ## 3. Transfer Public Key to Alice
-3.1 Grant Permissions
+### 3.1 Grant Permissions
 Before transferring, ensure the public key file is accessible:
 
 ```chmod 777 /home```
