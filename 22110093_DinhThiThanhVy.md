@@ -77,9 +77,11 @@ From the private key, extract the public key:
 
 ## 3. Transfer Public Key to Alice
 ### 3.1 Grant Permissions
-Before transferring, ensure the public key file is accessible:
+Before transferring, granting full permissions to both machinesensure to ensure the public key file is accessible:
 
-```chmod 777 /home```
+```chmod 777 /home``` 
+
+
 ### 3.2 Send Public Key to Alice
 Transfer Bob’s public key to Alice using scp:
 
