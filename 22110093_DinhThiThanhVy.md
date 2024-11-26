@@ -23,26 +23,26 @@ Implement public-key based authentication step-by-step with openssl according th
 
 ### Theory: 
 
-**- Generate a Secret Key (Symmetric Key):**
+- **Generate a Secret Key (Symmetric Key):**
   - The sender (Alice) generates a random secret key (using an algorithm like AES).
   - This secret key will be used to encrypt the data.
 
-**- Encrypt Data Using the Secret Key:**
+- **Encrypt Data Using the Secret Key:**
   - Alice uses the generated secret key to encrypt the data (such as a file or message) using a symmetric encryption algorithm like AES.
   - After encryption, Alice has the encrypted data ready to be sent.
 
-**- Encrypt the Secret Key Using RSA Public Key:**
+- **Encrypt the Secret Key Using RSA Public Key:**
   - Instead of sending the secret key directly (which would be insecure), Alice encrypts the secret key using Bob's RSA public key.
   - This ensures that only Bob, who has the corresponding RSA private key, can decrypt the secret key and use it to decrypt the data.
 
-**- Send the Data:**
+- **Send the Data:**
   - Alice sends the encrypted data and the encrypted secret key (which is encrypted with RSA) to Bob.
 
-**- Decrypt the Secret Key with RSA:**
+- **Decrypt the Secret Key with RSA:**
   - When Bob receives the data, he first uses his RSA private key to decrypt the secret key.
   - Once the secret key is successfully decrypted, Bob now has the key that Alice used to encrypt the data.
 
-**- Decrypt the Data Using the Secret Key:**
+- **Decrypt the Data Using the Secret Key:**
   - Bob uses the secret key to decrypt the encrypted data and retrieve the original information.
 
 ### 1.2 Create a Text File
