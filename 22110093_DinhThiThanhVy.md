@@ -14,8 +14,8 @@ Implement public-key based authentication step-by-step with openssl according th
 
 ## 1. Setup Environment
 ### 1.1 Alice and Bob Configuration
-Alice (server): IP 10.9.0.5
-Bob (client): IP 10.9.0.6
+- Alice (server): IP 10.9.0.5
+- Bob (client): IP 10.9.0.6
 
 ![image](https://github.com/user-attachments/assets/d79db62f-7a51-4669-9557-6aadd5648726)
 
