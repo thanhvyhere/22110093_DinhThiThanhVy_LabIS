@@ -206,8 +206,8 @@ Environment:
 
 **Generate an Initialization Vector (IV)**
 ```openssl rand -hex 16 > iv```
+![image](https://github.com/user-attachments/assets/76b7ca16-79c8-4305-b0cc-5cf2101e556c)
 
-![Uploading image.png…]()
 
 - Purpose: This command generates a random Initialization Vector (IV) of 16 bytes (or 128 bits) in hexadecimal format.
 - How it works: The openssl rand -hex 16 command generates 16 random bytes (128 bits) and outputs them in hexadecimal format. This IV is necessary for both CFB and OFB modes of AES encryption to ensure randomness and security during encryption.
