@@ -248,7 +248,9 @@ Environment:
 - How it works: The openssl rand -hex 16 command generates 16 random bytes (128 bits) and outputs them in hexadecimal format. This IV is necessary for both CFB and OFB modes of AES encryption to ensure randomness and security during encryption.
 
 **Encrypting the File in AES-256 CFB Mode**
+
 ```openssl enc -aes-256-cfb -in textfile.txt -out ciphertext_cfb.bin -K $(cat randompassword) -iv $(cat iv)```
+
 - Purpose: This command encrypts the textfile.txt using AES-256 encryption in CFB mode.
   - ```-aes-256-cfb```: Specifies the encryption algorithm (AES) and mode (CFB) with a 256-bit key.
   - ```-in textfile.txt```: Input file to be encrypted.
