@@ -206,6 +206,7 @@ Environment:
 
 **Generate an Initialization Vector (IV)**
 ```openssl rand -hex 16 > iv```
+
 ![image](https://github.com/user-attachments/assets/76b7ca16-79c8-4305-b0cc-5cf2101e556c)
 
 
